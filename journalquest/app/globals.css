@@ -38,7 +38,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-gray-200;
   }
   body {
     @apply bg-parchment-light text-leather-dark;
