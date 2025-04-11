@@ -86,7 +86,9 @@ export default function NavBar({ user, setUser, setJournals }: any) {
           </button>
 
           <div className="mb-6 mt-2 flex justify-center">
-            <Image src="/logo.png" alt="Logo" width={96} height={96} className="object-contain" />
+            <Link href="/" className="flex items-center">
+                        <Image src="/logo.png" alt="Logo" width={96} height={96} className="object-contain" /></Link>
+
           </div>
 
           <nav className="flex flex-col gap-2 mt-4">
@@ -99,7 +101,6 @@ export default function NavBar({ user, setUser, setJournals }: any) {
                 } break-words whitespace-normal w-full`}
                 onClick={() => setIsOpen(false)}
               >
-                <item.icon className="w-5 h-5 text-leather" />
                 <span>{item.name}</span>
               </Link>
             ))}

@@ -32,7 +32,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <NavbarWrapper />
           {/* ✅ Only layout content margin goes here */}
-          <main className="pt-0 px-4 lg:ml-[15vw]">
+          <main className="lg:ml-[15vw]">
             {children}
           </main>
         </ThemeProvider>

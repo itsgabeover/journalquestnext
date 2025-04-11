@@ -2,92 +2,153 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 🌗 Theme Variables */
 @layer base {
   :root {
-    --background: 43 54% 95%;
-    --foreground: 43 89% 21%;
-
-    --card: 43 54% 90%;
-    --card-foreground: 43 89% 21%;
-
-    --popover: 43 54% 95%;
-    --popover-foreground: 43 89% 21%;
-
-    --primary: 43 89% 28%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 43 54% 90%;
-    --secondary-foreground: 43 89% 21%;
-
-    --muted: 43 54% 90%;
-    --muted-foreground: 43 89% 40%;
-
-    --accent: 43 54% 90%;
-    --accent-foreground: 43 89% 21%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 43 54% 80%;
-    --input: 43 54% 95%;
-    --ring: 43 89% 28%;
-
-    --radius: 0.625rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
   }
+
   .dark {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-gray-200;
-  }
-  body {
-    @apply bg-parchment-light text-leather-dark;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-quicksand font-semibold;
-  }
-}
-
-
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
+/* 🧾 Brand Custom Colors (Journaling Theme) */
+:root {
+  --parchment-light: 36, 33%, 97%;
+  --leather: 26, 35%, 52%;
+  --leather-dark: 26, 35%, 42%;
+  --leather-light: 26, 35%, 62%;
+  --mythicalBlue-50: 215, 100%, 98%;
+  --mythicalBlue-100: 215, 100%, 95%;
+  --mythicalBlue-300: 215, 96%, 89%;
+  --mythicalBlue-700: 215, 70%, 35%;
+  --mythicalBlue-800: 215, 70%, 25%;
+}
+
+/* ✨ Utility Classes */
+.bg-parchment-light {
+  background-color: hsl(var(--parchment-light));
+}
+
+.bg-leather {
+  background-color: hsl(var(--leather));
+}
+
+.bg-leather-dark {
+  background-color: hsl(var(--leather-dark));
+}
+
+.text-leather {
+  color: hsl(var(--leather));
+}
+
+.text-leather-dark {
+  color: hsl(var(--leather-dark));
+}
+
+.border-leather-light {
+  border-color: hsl(var(--leather-light));
+}
+
+.bg-mythicalBlue-50 {
+  background-color: hsl(var(--mythicalBlue-50));
+}
+
+.bg-mythicalBlue-100 {
+  background-color: hsl(var(--mythicalBlue-100));
+}
+
+.border-mythicalBlue-300 {
+  border-color: hsl(var(--mythicalBlue-300));
+}
+
+.bg-mythicalBlue-700 {
+  background-color: hsl(var(--mythicalBlue-700));
+}
+
+.bg-mythicalBlue-800 {
+  background-color: hsl(var(--mythicalBlue-800));
+}
+
+/* 🎨 Gradients */
+.from-mythicalBlue-800 {
+  --tw-gradient-from: hsl(var(--mythicalBlue-800));
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, hsla(var(--mythicalBlue-800), 0));
+}
+
+.to-mythicalBlue-700 {
+  --tw-gradient-to: hsl(var(--mythicalBlue-700));
+}
+
+.from-mythicalBlue-50 {
+  --tw-gradient-from: hsl(var(--mythicalBlue-50));
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, hsla(var(--mythicalBlue-50), 0));
+}
+
+.to-mythicalBlue-100 {
+  --tw-gradient-to: hsl(var(--mythicalBlue-100));
+}
+
+/* 🧠 Interactive States */
+.hover\:bg-leather-dark:hover {
+  background-color: hsl(var(--leather-dark));
+}
+
+.hover\:bg-leather\/10:hover {
+  background-color: hsla(var(--leather), 0.1);
+}
+
+.hover\:text-leather-dark:hover {
+  color: hsl(var(--leather-dark));
+}
+
+/* 🌟 Glow Effect */
+.shadow-glow {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
