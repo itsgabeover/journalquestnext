@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
+
 export default function HomePage() {
   const heroRef = useRef(null);
   const archetypesRef = useRef(null);
@@ -52,52 +53,63 @@ export default function HomePage() {
   return (
     <div className="w-full max-w-7xl mx-auto">
       {/* Hero */}
-      <motion.section
-        ref={heroRef}
-        className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
-        initial="hidden"
-        animate={isHeroInView ? "visible" : "hidden"}
-        variants={fadeInUp}
+{/* Hero */}
+<section
+  ref={heroRef}
+  className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+>
+  {/* Background gradient */}
+  <div className="absolute inset-0 bg-gradient-to-b from-mythicalBlue-800 to-mythicalBlue-700 opacity-90 z-0" />
+
+  {/* Background image */}
+  <div className="absolute inset-0 bg-[url('/background.jpg')] bg-cover bg-center opacity-20 z-0" />
+
+  {/* Only this text block fades in */}
+  <motion.div
+    className="relative z-10 text-center space-y-6 max-w-3xl"
+    initial="hidden"
+    animate={isHeroInView ? "visible" : "hidden"}
+    variants={fadeInUp}
+  >
+    <h1 className="text-4xl md:text-6xl font-quicksand font-bold text-white leading-tight">
+      Welcome, Hero.
+      <br />
+      Your Journey Begins Here.
+    </h1>
+    <p className="text-xl md:text-2xl text-white/90">
+      Unlock the hidden patterns of your mind. Journal with an archetypal framework to uncover your true self.
+    </p>
+    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+      <Button asChild size="lg" className="bg-leather hover:bg-leather-dark text-white">
+        <Link href="https://archetypes.jilecek.cz/" target="_blank">
+          Take the Archetype Quiz
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
+      </Button>
+      <Button
+        asChild
+        size="lg"
+        className="bg-leather text-white hover:bg-leather-dark font-quicksand font-semibold"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-mythicalBlue-800 to-mythicalBlue-700 opacity-90 z-0" />
-        <div className="absolute inset-0 bg-[url('/background.jpg')] bg-cover bg-center opacity-20 z-0" />
-        <div className="relative z-10 text-center space-y-6 max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-quicksand font-bold text-white leading-tight">
-            Welcome, Hero.
-            <br />
-            Your Journey Begins Here.
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90">
-            Unlock the hidden patterns of your mind. Journal with an archetypal framework to uncover your true self.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <Button asChild size="lg" className="bg-leather hover:bg-leather-dark text-white">
-              <Link href="https://archetypes.jilecek.cz/" target="_blank">
-                Take the Archetype Quiz
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          <Button
-            asChild
-            size="lg"
-            className="bg-leather text-white hover:bg-leather-dark font-quicksand font-semibold"
-          >
-            <Link href="/signup">
-              Sign Up & Start Journaling
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-          </div>
-        </div>
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-        >
-          <ChevronRight className="h-10 w-10 text-white rotate-90" />
-        </motion.div>
-      </motion.section>
+        <Link href="/signup">
+          Sign Up & Start Journaling
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Link>
+      </Button>
+    </div>
+  </motion.div>
+
+  {/* Chevron stays animated separately */}
+  <motion.div
+    className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+  >
+    <ChevronRight className="h-10 w-10 text-white rotate-90" />
+  </motion.div>
+</section>
+
 
       {/* Archetypes Section */}
       <motion.section

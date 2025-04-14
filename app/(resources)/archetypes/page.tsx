@@ -2,12 +2,21 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-
+type Archetype = {
+  id: string;
+  name: string;
+  image: string;
+  shortDescription: string;
+  fullDescription: string;
+  traits: string[];
+  quote: string;
+  examples: string;
+};
 
 const archetypes = [
   {
@@ -219,7 +228,7 @@ export default function HomePage() {
     },
   };
 
-  const [selectedArchetype, setSelectedArchetype] = useState(null);
+  const [selectedArchetype, setSelectedArchetype] = useState<Archetype | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -241,7 +250,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {archetypes.map((a) => (
+          {archetypes.map((a: Archetype) => (
             <div
               key={a.id}
               className="p-6 rounded-lg bg-white border border-mythicalBlue-300 shadow-md hover:shadow-lg transition-all text-center cursor-pointer"

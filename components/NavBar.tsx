@@ -16,10 +16,14 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { logout } from "@/lib/features/auth/authSlice";
 
-export default function NavBar({ user, setUser, setJournals }: any) {
+export default function NavBar() {
   const router = useRouter();
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogoutClick = async () => {
@@ -27,26 +31,26 @@ export default function NavBar({ user, setUser, setJournals }: any) {
       method: "DELETE",
       credentials: "include",
     });
-    setUser(null);
-    setJournals([]);
+
+    dispatch(logout());
     router.push("/");
     setIsOpen(false);
   };
 
-  const navItems = user
-    ? [
-        { name: "Dashboard", href: "/dashboard", icon: Home },
-        { name: "My Journals", href: "/myjournal", icon: BookOpen },
-        { name: "My Profile", href: "/myprofile", icon: User },
-        { name: "Home", href: "/", icon: Landmark },
-        { name: "Archetypes", href: "/archetypes", icon: Info },
-      ]
-    : [
-        { name: "Home", href: "/", icon: Landmark },
-        { name: "Archetypes", href: "/archetypes", icon: Info },
-        { name: "Sign Up", href: "/signup", icon: UserPlus },
-        { name: "Login", href: "/login", icon: LogIn },
-      ];
+  const navItems = [
+    { name: "Home", href: "/", icon: Landmark },
+    { name: "Archetypes", href: "/archetypes", icon: Info },
+    ...(user
+      ? [
+          { name: "Dashboard", href: "/dashboard", icon: Home },
+          { name: "My Journals", href: "/myjournal", icon: BookOpen },
+          { name: "My Profile", href: "/myprofile", icon: User },
+        ]
+      : [
+          { name: "Sign Up", href: "/signup", icon: UserPlus },
+          { name: "Login", href: "/login", icon: LogIn },
+        ]),
+  ];
 
   return (
     <>
@@ -65,7 +69,7 @@ export default function NavBar({ user, setUser, setJournals }: any) {
           className="fixed inset-0 bg-black/40 z-30 lg:hidden"
           onClick={() => setIsOpen(false)}
           aria-hidden
-        ></div>
+        />
       )}
 
       {/* Sidebar */}
@@ -85,12 +89,14 @@ export default function NavBar({ user, setUser, setJournals }: any) {
             <X className="h-5 w-5" />
           </button>
 
+          {/* Logo */}
           <div className="mb-6 mt-2 flex justify-center">
             <Link href="/" className="flex items-center">
-                        <Image src="/logo.png" alt="Logo" width={96} height={96} className="object-contain" /></Link>
-
+              <Image src="/logo.png" alt="Logo" width={96} height={96} className="object-contain" />
+            </Link>
           </div>
 
+          {/* Nav Links */}
           <nav className="flex flex-col gap-2 mt-4">
             {navItems.map((item) => (
               <Link
@@ -101,6 +107,7 @@ export default function NavBar({ user, setUser, setJournals }: any) {
                 } break-words whitespace-normal w-full`}
                 onClick={() => setIsOpen(false)}
               >
+                <item.icon className="w-5 h-5" />
                 <span>{item.name}</span>
               </Link>
             ))}
