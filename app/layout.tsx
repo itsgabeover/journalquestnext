@@ -4,6 +4,7 @@ import { Inter, Quicksand } from "next/font/google"
 import "./globals.css"
 import StoreProvider from "./StoreProvider"
 import NavBar from "@/components/NavBar"
+import UserLoader from "@/components/UserLoader"
 // Load fonts
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const quicksand = Quicksand({
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className="font-sans bg-parchment-light">
         <StoreProvider>
           <NavBar />
+          <UserLoader />
           <main className="lg:ml-[15vw]">
             {children}
           </main>
