@@ -18,23 +18,44 @@ import {
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { logout } from "@/lib/features/auth/authSlice";
+import { useToast } from "@/hooks/use-toast";
 
 export default function NavBar() {
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
+  const { toast } = useToast();
+
   const user = useAppSelector((state) => state.auth.user);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogoutClick = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    setIsLoggingOut(true);
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      
+      dispatch(logout());
+      router.push("/");
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully.",
+        variant: "default",
+      });
+    } catch (error) {
+      toast({
+        title: "Logout failed",
+        description: "Something went wrong while logging out.",
+        variant: "destructive",
+      });
+    } finally {
 
-    dispatch(logout());
-    router.push("/");
-    setIsOpen(false);
+      setIsLoggingOut(false);
+      setIsOpen(false);
+    }
   };
 
   const navItems = [
@@ -43,8 +64,6 @@ export default function NavBar() {
     ...(user
       ? [
           { name: "Dashboard", href: "/dashboard", icon: Home },
-          { name: "My Journals", href: "/myjournal", icon: BookOpen },
-          { name: "My Profile", href: "/myprofile", icon: User },
         ]
       : [
           { name: "Sign Up", href: "/signup", icon: UserPlus },
@@ -107,7 +126,6 @@ export default function NavBar() {
                 } break-words whitespace-normal w-full`}
                 onClick={() => setIsOpen(false)}
               >
-                <item.icon className="w-5 h-5" />
                 <span>{item.name}</span>
               </Link>
             ))}
@@ -115,10 +133,11 @@ export default function NavBar() {
             {user && (
               <button
                 onClick={handleLogoutClick}
-                className="flex items-center gap-3 px-4 py-2 rounded-md font-quicksand font-medium text-leather hover:bg-leather/10"
+                className="flex items-center gap-3 px-4 py-2 rounded-md font-quicksand font-medium text-leather hover:bg-leather/10 disabled:opacity-50"
+                disabled={isLoggingOut}
               >
                 <LogOut className="w-5 h-5 text-leather" />
-                <span>Logout</span>
+                <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
               </button>
             )}
           </nav>

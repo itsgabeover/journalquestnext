@@ -1,17 +1,18 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter, Quicksand } from "next/font/google"
-import "./globals.css"
-import StoreProvider from "./StoreProvider"
-import NavBar from "@/components/NavBar"
-import UserLoader from "@/components/UserLoader"
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter, Quicksand } from "next/font/google";
+import "./globals.css";
+import StoreProvider from "../components/StoreProvider";
+import ConditionalLayout from "@/components/ConditionalLayout";
+import { Toaster } from "@/components/ui/toaster";
+
 // Load fonts
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-quicksand",
-})
+});
 
 export const metadata: Metadata = {
   title: "Journal Quest - Archetypal Journaling",
@@ -19,24 +20,23 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${quicksand.variable}`} suppressHydrationWarning>
       <body className="font-sans bg-parchment-light">
         <StoreProvider>
-          <NavBar />
-          <UserLoader />
-          <main className="lg:ml-[15vw]">
+          <ConditionalLayout>
             {children}
-          </main>
+          </ConditionalLayout>
+          <Toaster />
         </StoreProvider>
       </body>
     </html>
-  )
+  );
 }

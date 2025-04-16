@@ -52,11 +52,10 @@ export default function HomePage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto">
-      {/* Hero */}
 {/* Hero */}
 <section
   ref={heroRef}
-  className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+  className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
 >
   {/* Background gradient */}
   <div className="absolute inset-0 bg-gradient-to-b from-mythicalBlue-800 to-mythicalBlue-700 opacity-90 z-0" />

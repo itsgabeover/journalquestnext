@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch } from "@/lib/hooks";
@@ -10,6 +10,9 @@ import type { User } from "@/types";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextUrl = searchParams.get("next") || "/dashboard";
+
   const dispatch = useAppDispatch();
 
   const [username, setUsername] = useState("");
@@ -17,38 +20,39 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-async function handleSubmit(e: React.FormEvent) {
-  e.preventDefault();
-  setIsLoading(true);
-  setError("");
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Invalid login");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Invalid login");
+      }
+
+      const user: User = await res.json();
+      dispatch(setUser(user));
+
+      // ✅ Redirect to next page
+      router.push(nextUrl);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    const user: User = await res.json();
-    dispatch(setUser(user));
-    router.push("/dashboard");
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError("Something went wrong.");
-    }
-  } finally {
-    setIsLoading(false);
   }
-}
-
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
