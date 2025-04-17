@@ -32,8 +32,18 @@ export default function JournalsPage() {
   const user = useAppSelector((state) => state.auth.user);
   const [journals, setJournals] = useState([]);
   const [folders, setFolders] = useState([]);
-  const [form, setForm] = useState({ title: "", body: "", archetype: "", folder_id: "" });
-  const [filters, setFilters] = useState({ search: "", folder: "all", archetype: "", sort: "latest" });
+  const [form, setForm] = useState({
+    title: "",
+    body: "",
+    archetype: "",
+    folder_id: "",
+  });
+  const [filters, setFilters] = useState({
+    search: "",
+    folder: "all",
+    archetype: "",
+    sort: "latest",
+  });
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [journalToDelete, setJournalToDelete] = useState(null);
   const [newFolderName, setNewFolderName] = useState("");
@@ -41,20 +51,34 @@ export default function JournalsPage() {
   const [activeView, setActiveView] = useState("journals");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/folders`, { credentials: "include" })
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/folders`, {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then(setFolders)
       .catch(console.error);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/journals`, { credentials: "include" })
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/journals`, {
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then(setJournals)
       .catch(console.error);
   }, []);
 
   const filteredJournals = journals
-    .filter((j) => !filters.search || j.title.toLowerCase().includes(filters.search.toLowerCase()))
-    .filter((j) => filters.folder === "all" || (filters.folder === "null" ? !j.folder_id : j.folder_id == filters.folder))
+    .filter(
+      (j) =>
+        !filters.search ||
+        j.title.toLowerCase().includes(filters.search.toLowerCase())
+    )
+    .filter(
+      (j) =>
+        filters.folder === "all" ||
+        (filters.folder === "null"
+          ? !j.folder_id
+          : j.folder_id == filters.folder)
+    )
     .filter((j) => !filters.archetype || j.archetype === filters.archetype)
     .sort((a, b) => {
       const dA = new Date(a.created_at);
@@ -73,14 +97,21 @@ export default function JournalsPage() {
       toast({ title: "Title is required", variant: "destructive" });
       return;
     }
-    const payload = { ...form, folder_id: form.folder_id || null, user_id: user?.id };
+    const payload = {
+      ...form,
+      folder_id: form.folder_id || null,
+      user_id: user?.id,
+    };
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/newJournalEntry`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/newJournalEntry`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        }
+      );
       const newJournal = await res.json();
       setJournals((prev) => [newJournal, ...prev]);
       setForm({ title: "", body: "", archetype: "", folder_id: "" });
@@ -98,7 +129,9 @@ export default function JournalsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ folder: { name: newFolderName, user_id: user?.id } }),
+        body: JSON.stringify({
+          folder: { name: newFolderName, user_id: user?.id },
+        }),
       });
       const newFolder = await res.json();
       setFolders((prev) => [...prev, newFolder]);
@@ -118,7 +151,10 @@ export default function JournalsPage() {
   const handleDeleteJournal = async () => {
     if (!journalToDelete) return;
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/journals/${journalToDelete.id}`, { method: "DELETE", credentials: "include" });
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/journals/${journalToDelete.id}`,
+        { method: "DELETE", credentials: "include" }
+      );
       setJournals((prev) => prev.filter((j) => j.id !== journalToDelete.id));
       toast({ title: "Journal deleted" });
     } catch (err) {
@@ -180,7 +216,10 @@ export default function JournalsPage() {
                 </option>
               ))}
             </select>
-            <Button type="submit" className="bg-leather text-white hover:bg-leather-dark">
+            <Button
+              type="submit"
+              className="bg-leather text-white hover:bg-leather-dark"
+            >
               Save Entry
             </Button>
           </div>
@@ -194,11 +233,15 @@ export default function JournalsPage() {
             <Input
               placeholder="Search journals"
               value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
             />
             <select
               value={filters.folder}
-              onChange={(e) => setFilters({ ...filters, folder: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, folder: e.target.value })
+              }
               className="border rounded-md px-3 py-2"
             >
               <option value="all">All Folders</option>
@@ -211,11 +254,15 @@ export default function JournalsPage() {
             </select>
             <select
               value={filters.archetype}
-              onChange={(e) => setFilters({ ...filters, archetype: e.target.value })}
+              onChange={(e) =>
+                setFilters({ ...filters, archetype: e.target.value })
+              }
               className="border rounded-md px-3 py-2"
             >
               <option value="">All Archetypes</option>
-              {[...new Set(journals.map((j) => j.archetype).filter(Boolean))].map((a) => (
+              {[
+                ...new Set(journals.map((j) => j.archetype).filter(Boolean)),
+              ].map((a) => (
                 <option key={a}>{a}</option>
               ))}
             </select>
@@ -237,9 +284,10 @@ export default function JournalsPage() {
               filteredJournals.map((j) => (
                 <Card
                   key={j.id}
-                  className="relative group cursor-pointer hover:border-leather-dark transition"
                   onClick={() => router.push(`/dashboard/journals/${j.id}`)}
+                  className="relative group cursor-pointer aspect-[3/4] p-0 bg-[url('/journal-bg.png')] bg-contain bg-no-repeat bg-center shadow-none border-none rounded-none bg-transparent"
                 >
+                  {/* Delete Button */}
                   <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100">
                     <Button
                       size="sm"
@@ -252,15 +300,42 @@ export default function JournalsPage() {
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
-                  <h3 className="text-lg font-bold text-leather-dark mb-1">{j.title}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-3 whitespace-pre-wrap">{j.body}</p>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {j.folder_id && (
-                      <Badge variant="outline">
-                        📁 {folders.find((f) => f.id === j.folder_id)?.name || "Unknown"}
-                      </Badge>
-                    )}
-                    {j.archetype && <Badge variant="outline">🔮 {j.archetype}</Badge>}
+
+                  {/* Content Wrapper */}
+                  <div className="h-full w-full px-8 py-8 text-[#4b321b] flex flex-col justify-between overflow-hidden max-w-full break-words">
+                    <div>
+                      <h3 className="text-fluidLg font-bold mb-2 text-[#4b321b] drop-shadow-sm line-clamp-1">
+                        {j.title}
+                      </h3>
+                      <p className="text-fluidBase text-[#4b321b] drop-shadow-sm whitespace-pre-wrap line-clamp-4 break-words">
+                        {j.body}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-1">
+                      {j.folder_id && (
+                        <Badge
+                          variant="outline"
+                          className="max-w-full truncate border-[#4b321b] text-[#4b321b] bg-white/80"
+                        >
+                          📁{" "}
+                          <span className="truncate">
+                            {folders.find((f) => f.id === j.folder_id)?.name ||
+                              "Unknown"}
+                          </span>
+                        </Badge>
+                      )}
+                      {j.archetype && (
+                        <Badge
+                          variant="outline"
+                          className="max-w-full truncate border-[#4b321b] text-[#4b321b] bg-white/80"
+                        >
+                          <span className="font-fluidBase truncate">
+                            🔮 {j.archetype}
+                          </span>
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </Card>
               ))
@@ -274,8 +349,15 @@ export default function JournalsPage() {
               </DialogHeader>
               <p>This will permanently delete your journal.</p>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={handleDeleteJournal}>Delete</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteDialog(false)}
+                >
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteJournal}>
+                  Delete
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
