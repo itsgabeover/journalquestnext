@@ -17,8 +17,11 @@ export type User = {
   nickname?: string;
   email: string;
   archetype?: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
+  total_journals?: number;
+  longest_streak?: number;
+  quests_completed?: number;
 };
 
 export type Journal = {
@@ -39,3 +42,15 @@ export interface Folder {
   created_at: string;
   updated_at: string;
 }
+
+export type Quest = {
+  id: number;
+  user_id: number;
+  title: string;
+  description: string;
+  status: string;
+  goal: number;
+  progress: number;
+  created_at: string;
+  updated_at: string;
+};

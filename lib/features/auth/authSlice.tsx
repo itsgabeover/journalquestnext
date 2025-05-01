@@ -1,4 +1,3 @@
-// lib/features/auth/authSlice.ts
 import { User } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -20,6 +19,11 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.loading = false;
     },
+    updateUser(state, action: PayloadAction<User>) {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
     logout(state) {
       state.user = null;
       state.loading = false;
@@ -30,5 +34,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, logout, stopLoading } = authSlice.actions;
+export const { setUser, updateUser, logout, stopLoading } = authSlice.actions;
 export default authSlice.reducer;
