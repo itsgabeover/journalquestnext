@@ -35,67 +35,75 @@ export default function HomePage() {
   const featuredArchetypes = archetypes.filter((a) =>
     ["Seeker", "Warrior", "Sage (Senex)"].includes(a.name)
   );
- 
 
   return (
     <div className="w-full max-w-7xl mx-auto">
-{/* Hero */}
-<section
-  ref={heroRef}
-  className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
->
-  {/* Background gradient */}
-  <div className="absolute inset-0 bg-gradient-to-b from-mythicalBlue-800 to-mythicalBlue-700 opacity-90 z-0" />
-
-  {/* Background image */}
-  <div className="absolute inset-0 bg-[url('/background.jpg')] bg-cover bg-center opacity-20 z-0" />
-
-  {/* Only this text block fades in */}
-  <motion.div
-    className="relative z-10 text-center space-y-6 max-w-3xl"
-    initial="hidden"
-    animate={isHeroInView ? "visible" : "hidden"}
-    variants={fadeInUp}
-  >
-    <h1 className="text-4xl md:text-6xl font-quicksand font-bold text-white leading-tight">
-      Welcome, Hero.
-      <br />
-      Your Journey Begins Here.
-    </h1>
-    <p className="text-xl md:text-2xl text-white/90">
-      Unlock the hidden patterns of your mind. Journal with an archetypal framework to uncover your true self.
-    </p>
-    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-      <Button asChild size="lg" className="bg-leather hover:bg-leather-dark text-white">
-        <Link href="https://archetypes.jilecek.cz/" target="_blank">
-          Take the Archetype Quiz
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Link>
-      </Button>
-      <Button
-        asChild
-        size="lg"
-        className="bg-leather text-white hover:bg-leather-dark font-quicksand font-semibold"
+      {/* Hero */}
+      <section
+        ref={heroRef}
+        className="relative min-h-[100vh] flex items-center justify-center overflow-hidden"
       >
-        <Link href="/signup">
-          Sign Up & Start Journaling
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Link>
-      </Button>
-    </div>
-  </motion.div>
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-mythicalBlue-800 to-mythicalBlue-700 opacity-90 z-0" />
 
-  {/* Chevron stays animated separately */}
-  <motion.div
-    className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 1, duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
-  >
-    <ChevronRight className="h-10 w-10 text-white rotate-90" />
-  </motion.div>
-</section>
+        {/* Background image */}
+        <div className="absolute inset-0 bg-[url('/background.jpg')] bg-cover bg-center opacity-20 z-0" />
 
+        {/* Only this text block fades in */}
+        <motion.div
+          className="relative z-10 text-center space-y-6 max-w-3xl"
+          initial="hidden"
+          animate={isHeroInView ? "visible" : "hidden"}
+          variants={fadeInUp}
+        >
+          <h1 className="text-4xl md:text-6xl font-quicksand font-bold text-white leading-tight">
+            Welcome, Hero.
+            <br />
+            Your Journey Begins Here.
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90">
+            Unlock the hidden patterns of your mind. Journal with an archetypal
+            framework to uncover your true self.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <Button
+              asChild
+              size="lg"
+              className="bg-leather hover:bg-leather-dark text-white"
+            >
+              <Link href="https://archetypes.jilecek.cz/" target="_blank">
+                Take the Archetype Quiz
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              className="bg-leather text-white hover:bg-leather-dark font-quicksand font-semibold"
+            >
+              <Link href="/signup">
+                Sign Up & Start Journaling
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Chevron stays animated separately */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 1,
+            duration: 0.8,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+        >
+          <ChevronRight className="h-10 w-10 text-white rotate-90" />
+        </motion.div>
+      </section>
 
       {/* Archetypes Section */}
       <motion.section
@@ -110,8 +118,8 @@ export default function HomePage() {
             Discover Your Archetypes
           </h2>
           <p className="text-lg text-leather max-w-2xl mx-auto">
-            Archetypes are universal patterns and images that derive from the collective unconscious. Discover which
-            ones resonate with you.
+            Archetypes are universal patterns and images that derive from the
+            collective unconscious. Discover which ones resonate with you.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -128,13 +136,19 @@ export default function HomePage() {
                   className="object-cover object-top transition-transform duration-500"
                 />
               </div>
-              <h3 className="text-xl font-bold font-quicksand text-leather-dark mb-2">{a.name}</h3>
-              <p className="text-leather text-sm">{a.description}</p>
+              <h3 className="text-xl font-bold font-quicksand text-leather-dark mb-2">
+                {a.name}
+              </h3>
+              <p className="text-leather text-sm">{a.shortDescription}</p>
             </div>
           ))}
         </div>
         <div className="text-center mt-12">
-          <Button asChild variant="outline" className="border-leather text-leather hover:bg-leather/10">
+          <Button
+            asChild
+            variant="outline"
+            className="border-leather text-leather hover:bg-leather/10"
+          >
             <Link href="/archetypes">
               Explore All Archetypes
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -156,14 +170,19 @@ export default function HomePage() {
             Ready to Begin Your Journey?
           </h2>
           <p className="text-lg text-leather">
-            Take this free and insightful quiz to reveal your dominant archetype and begin your transformation.
+            Take this free and insightful quiz to reveal your dominant archetype
+            and begin your transformation.
           </p>
           <Button
             asChild
             size="lg"
             className="bg-leather text-white hover:bg-leather-dark font-quicksand font-semibold"
           >
-            <Link href="https://archetypes.jilecek.cz/" target="_blank" rel="noreferrer">
+            <Link
+              href="https://archetypes.jilecek.cz/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Start the Quiz
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -184,7 +203,8 @@ export default function HomePage() {
             The Power of Archetypes
           </h2>
           <p className="text-leather">
-            Learn about Carl Jung&apos;s archetypal framework and how it can transform your journaling experience.
+            Learn about Carl Jung&apos;s archetypal framework and how it can
+            transform your journaling experience.
           </p>
         </div>
         <div className="relative max-w-4xl mx-auto rounded-xl overflow-hidden border border-mythicalBlue-300 shadow-xl">
@@ -211,7 +231,8 @@ export default function HomePage() {
             Your story is waiting to be written.
           </h2>
           <p className="text-xl text-leather">
-            Join thousands who have discovered their archetypal patterns and transformed their lives through journaling.
+            Join thousands who have discovered their archetypal patterns and
+            transformed their lives through journaling.
           </p>
           <Button
             asChild
@@ -235,15 +256,23 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
       >
         <div className="text-center max-w-4xl mx-auto space-y-4">
-          <Image src="/logo.png" alt="Logo" width={48} height={48} className="mx-auto" />
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={48}
+            height={48}
+            className="mx-auto"
+          />
           <p className="text-white/80">
-            Unlock the hidden patterns of your mind with archetypal journaling. Start your journey of self-discovery today.
+            Unlock the hidden patterns of your mind with archetypal journaling.
+            Start your journey of self-discovery today.
           </p>
           <div className="text-sm text-white/60">
             © {new Date().getFullYear()} Journal Quest. All rights reserved.
           </div>
           <div className="text-xs text-white/60 flex justify-center items-center gap-1">
-            <Heart className="h-3 w-3" /> Made with love for your archetypal journey
+            <Heart className="h-3 w-3" /> Made with love for your archetypal
+            journey
           </div>
         </div>
       </motion.footer>

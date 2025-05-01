@@ -11,17 +11,31 @@ export type Archetype = {
 
 export type User = {
   id: number;
-  email: string;
-  username: string; // ✅ Is this present?
+  username: string;
   first_name?: string;
   last_name?: string;
+  nickname?: string;
+  email: string;
   archetype?: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Journal = {
   id: number;
   title: string;
-  content: string;
+  body: string;
+  archetype: string;
+  folder_id: number | null;
+  user_id: number;
   created_at: string;
-  // Add more fields as needed
+  updated_at: string;
 };
+
+export interface Folder {
+  id: number;
+  name: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+}

@@ -8,8 +8,6 @@ import {
   Landmark,
   LogOut,
   Menu,
-  User,
-  BookOpen,
   Info,
   LogIn,
   UserPlus,
@@ -37,7 +35,7 @@ export default function NavBar() {
         method: "DELETE",
         credentials: "include",
       });
-      
+
       dispatch(logout());
       router.push("/");
       toast({
@@ -45,14 +43,14 @@ export default function NavBar() {
         description: "You have been logged out successfully.",
         variant: "default",
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Logout error:", error);
       toast({
         title: "Logout failed",
         description: "Something went wrong while logging out.",
         variant: "destructive",
       });
     } finally {
-
       setIsLoggingOut(false);
       setIsOpen(false);
     }
@@ -62,9 +60,7 @@ export default function NavBar() {
     { name: "Home", href: "/", icon: Landmark },
     { name: "Archetypes", href: "/archetypes", icon: Info },
     ...(user
-      ? [
-          { name: "Dashboard", href: "/dashboard", icon: Home },
-        ]
+      ? [{ name: "Dashboard", href: "/dashboard", icon: Home }]
       : [
           { name: "Sign Up", href: "/signup", icon: UserPlus },
           { name: "Login", href: "/login", icon: LogIn },
@@ -111,7 +107,13 @@ export default function NavBar() {
           {/* Logo */}
           <div className="mb-6 mt-2 flex justify-center">
             <Link href="/" className="flex items-center">
-              <Image src="/logo.png" alt="Logo" width={96} height={96} className="object-contain" />
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={96}
+                height={96}
+                className="object-contain"
+              />
             </Link>
           </div>
 
@@ -122,10 +124,13 @@ export default function NavBar() {
                 key={item.name}
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-2 rounded-md font-quicksand font-medium text-leather hover:bg-leather/10 ${
-                  pathname === item.href ? "bg-leather/20 text-leather-dark" : ""
+                  pathname === item.href
+                    ? "bg-leather/20 text-leather-dark"
+                    : ""
                 } break-words whitespace-normal w-full`}
                 onClick={() => setIsOpen(false)}
               >
+                <item.icon className="w-5 h-5 text-leather" />
                 <span>{item.name}</span>
               </Link>
             ))}

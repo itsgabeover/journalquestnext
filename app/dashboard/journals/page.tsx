@@ -5,70 +5,72 @@ import { useAppSelector } from "@/lib/hooks";
 import NewJournalForm from "./NewJournalForm";
 import JournalGrid from "./JournalGrid";
 import { Button } from "@/components/ui/button";
-import { FaBookOpen, FaFeather } from "react-icons/fa";
+import { FaFeather } from "react-icons/fa";
+import { Folder, Journal, User } from "@/types";
 
 export default function JournalsPage() {
-  const user = useAppSelector((state) => state.auth.user);
+  const user: User | null = useAppSelector((state) => state.auth.user);
   const [activeView, setActiveView] = useState<"write" | "journals">(
     "journals"
   );
-  const [journals, setJournals] = useState([]);
-  const [folders, setFolders] = useState([]);
+  const [journals, setJournals] = useState<Journal[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/folders`, {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then(setFolders)
+      .then((data: Folder[]) => setFolders(data))
       .catch(console.error);
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/journals`, {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then(setJournals)
+      .then((data: Journal[]) => setJournals(data))
       .catch(console.error);
   }, []);
 
+  const handleAddFolder = (newFolder: Folder) => {
+    setFolders((prev) => [...prev, newFolder]);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-4 space-y-4">
+    <div className="max-w-7xl mx-auto px-4">
       <div className="flex gap-4">
         <Button
-          onClick={() => setActiveView("journals")}
-          className={`${
-            activeView === "journals"
-              ? "bg-leather text-white hover:bg-leather-dark"
-              : "border-leather bg-white text-leather hover:bg-parchment"
-          }`}
-        >
-          <FaBookOpen className="mr-2" /> My Journals
-        </Button>
-        <Button
           onClick={() => setActiveView("write")}
-          className={`${
+          className={`my-2 ${
             activeView === "write"
-              ? "bg-leather text-white hover:bg-leather-dark"
-              : "border-leather bg-white text-leather hover:bg-parchment"
+              ? "hidden"
+              : "bg-leather text-white hover:bg-leather-dark"
           }`}
         >
           <FaFeather className="mr-2" /> Write New Entry
         </Button>
       </div>
-      {activeView === "write" && (
+
+      {activeView === "write" && user && (
         <NewJournalForm
           folders={folders}
           user={user}
-          onSave={(newJournal) => setJournals((prev) => [newJournal, ...prev])}
+          onSave={(newJournal: Journal) =>
+            setJournals((prev) => [newJournal, ...prev])
+          }
+          onAddFolder={handleAddFolder}
+          onBack={() => setActiveView("journals")}
         />
       )}
+
       {activeView === "journals" && (
         <JournalGrid
           journals={journals}
           folders={folders}
-          onDelete={(id) =>
+          onDelete={(id: number) =>
             setJournals((prev) => prev.filter((j) => j.id !== id))
           }
+          onAddFolder={handleAddFolder}
         />
       )}
     </div>

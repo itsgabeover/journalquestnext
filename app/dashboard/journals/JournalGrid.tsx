@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
-import { Trash2 } from "lucide-react";
+import { Trash2, FolderPlus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import type { Journal, Folder } from "@/types";
 
-export default function JournalGrid({ journals, folders, onDelete }) {
+interface Props {
+  journals: Journal[];
+  folders: Folder[];
+  onDelete: (id: number) => void;
+  onAddFolder: (folder: Folder) => void;
+}
+
+export default function JournalGrid({
+  journals,
+  folders,
+  onDelete,
+  onAddFolder,
+}: Props) {
   const router = useRouter();
+
   const [filters, setFilters] = useState({
     search: "",
     folder: "all",
@@ -26,7 +41,9 @@ export default function JournalGrid({ journals, folders, onDelete }) {
   });
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [journalToDelete, setJournalToDelete] = useState(null);
+  const [journalToDelete, setJournalToDelete] = useState<Journal | null>(null);
+  const [showFolderDialog, setShowFolderDialog] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
 
   const filteredJournals = journals
     .filter(
@@ -34,21 +51,21 @@ export default function JournalGrid({ journals, folders, onDelete }) {
         !filters.search ||
         j.title.toLowerCase().includes(filters.search.toLowerCase())
     )
-    .filter(
-      (j) =>
-        filters.folder === "all" ||
-        (filters.folder === "null"
-          ? !j.folder_id
-          : j.folder_id == filters.folder)
-    )
+    .filter((j) => {
+      if (filters.folder === "all") return true;
+      if (filters.folder === "null") return j.folder_id === null;
+      return j.folder_id?.toString() === filters.folder;
+    })
     .filter((j) => !filters.archetype || j.archetype === filters.archetype)
     .sort((a, b) => {
       const dA = new Date(a.created_at);
       const dB = new Date(b.created_at);
-      return filters.sort === "latest" ? dB - dA : dA - dB;
+      return filters.sort === "latest"
+        ? dB.getTime() - dA.getTime()
+        : dA.getTime() - dB.getTime();
     });
 
-  const confirmDelete = (journal) => {
+  const confirmDelete = (journal: Journal) => {
     setJournalToDelete(journal);
     setShowDeleteDialog(true);
   };
@@ -58,97 +75,138 @@ export default function JournalGrid({ journals, folders, onDelete }) {
     try {
       await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/journals/${journalToDelete.id}`,
-        { method: "DELETE", credentials: "include" }
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
       );
       onDelete(journalToDelete.id);
       toast({ title: "Journal deleted" });
-    } catch (err) {
+    } catch {
       toast({ title: "Failed to delete journal", variant: "destructive" });
     } finally {
       setShowDeleteDialog(false);
     }
   };
 
+  const handleAddFolder = async () => {
+    if (!newFolderName.trim()) {
+      toast({ title: "Folder name is required", variant: "destructive" });
+      return;
+    }
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/folders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ name: newFolderName }),
+      });
+      const newFolder: Folder = await res.json();
+      onAddFolder(newFolder);
+      setNewFolderName("");
+      setShowFolderDialog(false);
+      toast({ title: "Folder created" });
+    } catch {
+      toast({ title: "Failed to create folder", variant: "destructive" });
+    }
+  };
+
+  const truncateText = (text: string, maxLength = 12) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <>
-      {/* Filters */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Input
-          placeholder="Search journals"
-          value={filters.search}
-          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          className="border-leather text-leather placeholder:text-leather-dark bg-parchment-light"
-        />
-        <select
-          value={filters.folder}
-          onChange={(e) => setFilters({ ...filters, folder: e.target.value })}
-          className="border-leather text-leather bg-parchment-light rounded-md px-3 py-2"
+      <div className="flex justify-between items-start mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 flex-grow">
+          <Input
+            placeholder="Search journals"
+            value={filters.search}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setFilters({ ...filters, search: e.target.value })
+            }
+            className="border-leather text-leather placeholder:text-leather-dark bg-parchment-light"
+          />
+          <select
+            value={filters.folder}
+            onChange={(e) => setFilters({ ...filters, folder: e.target.value })}
+            className="border-leather text-leather bg-parchment-light rounded-md px-3 py-2"
+          >
+            <option value="all">All Folders</option>
+            <option value="null">Unassigned</option>
+            {folders.map((f) => (
+              <option key={f.id} value={f.id.toString()}>
+                {f.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filters.archetype}
+            onChange={(e) =>
+              setFilters({ ...filters, archetype: e.target.value })
+            }
+            className="border-leather text-leather bg-parchment-light rounded-md px-3 py-2"
+          >
+            <option value="">All Archetypes</option>
+            {[...new Set(journals.map((j) => j.archetype).filter(Boolean))].map(
+              (a) => (
+                <option key={a}>{a}</option>
+              )
+            )}
+          </select>
+          <select
+            value={filters.sort}
+            onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
+            className="border-leather text-leather bg-parchment-light rounded-md px-3 py-2"
+          >
+            <option value="latest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
+        <Button
+          onClick={() => setShowFolderDialog(true)}
+          className="ml-4 bg-leather text-white hover:bg-leather-dark whitespace-nowrap"
         >
-          <option value="all">All Folders</option>
-          <option value="null">Unassigned</option>
-          {folders.map((f) => (
-            <option key={f.id} value={f.id}>
-              {f.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={filters.archetype}
-          onChange={(e) =>
-            setFilters({ ...filters, archetype: e.target.value })
-          }
-          className="border-leather text-leather bg-parchment-light rounded-md px-3 py-2"
-        >
-          <option value="">All Archetypes</option>
-          {[...new Set(journals.map((j) => j.archetype).filter(Boolean))].map(
-            (a) => (
-              <option key={a}>{a}</option>
-            )
-          )}
-        </select>
-        <select
-          value={filters.sort}
-          onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
-          className="border-leather text-leather bg-parchment-light rounded-md px-3 py-2"
-        >
-          <option value="latest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-        </select>
+          <FolderPlus className="w-4 h-4 mr-2" />
+          New Folder
+        </Button>
       </div>
 
-      {/* Journal Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {filteredJournals.length === 0 ? (
-          <Card className="p-6 text-center">No journals found</Card>
+          <Card className="p-6 text-center col-span-full">
+            No journals found
+          </Card>
         ) : (
           filteredJournals.map((j) => (
             <Card
               key={j.id}
               onClick={() => router.push(`/dashboard/journals/${j.id}`)}
-              className="relative group cursor-pointer p-4 bg-[url('/parchment-bg.png')] bg-cover bg-center border border-parchment-dark shadow-sm hover:shadow-md rounded-md transition-shadow"
+              className="relative group cursor-pointer p-2 bg-[url('/parchment-bg.png')] bg-cover bg-center border border-parchment-dark shadow-sm hover:shadow-md rounded-md transition-shadow h-[200px] flex flex-col"
             >
               <div className="absolute inset-0 bg-white/50 z-0 rounded-md" />
 
-              <div className="absolute top-1.5 right-1.5 z-30 opacity-0 group-hover:opacity-100">
+              <div className="absolute top-1 right-1 z-30 opacity-0 group-hover:opacity-100">
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-7 w-7"
+                  className="h-6 w-6"
                   onClick={(e) => {
                     e.stopPropagation();
                     confirmDelete(j);
                   }}
                 >
-                  <Trash2 className="w-4 h-4 text-destructive" />
+                  <Trash2 className="w-3 h-3 text-destructive" />
                 </Button>
               </div>
 
-              <div className="relative z-10">
-                <div className="mb-2">
-                  <h3 className="text-lg font-semibold text-black line-clamp-1">
+              <div className="relative z-10 flex flex-col flex-grow">
+                <div className="mb-1.5">
+                  <h3 className="text-base font-semibold text-leather-dark line-clamp-1">
                     {j.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {new Date(j.created_at).toLocaleDateString(undefined, {
                       year: "numeric",
                       month: "short",
@@ -157,29 +215,36 @@ export default function JournalGrid({ journals, folders, onDelete }) {
                   </p>
                 </div>
 
-                <p className="text-sm text-gray-800 line-clamp-3 whitespace-pre-wrap mb-4">
-                  {j.body.trim().slice(0, 160)}
-                  {j.body.length > 160 && "..."}
+                <p className="text-xs text-gray-800 line-clamp-2 whitespace-pre-wrap mb-auto">
+                  {j.body.trim().slice(0, 120)}
+                  {j.body.length > 120 && "..."}
                 </p>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 mt-2 relative z-10">
                   {j.folder_id && (
-                    <Badge
-                      variant="outline"
-                      className="border-black text-black"
-                    >
-                      📁{" "}
-                      {folders.find((f) => f.id === j.folder_id)?.name ||
-                        "Unknown"}
-                    </Badge>
+                    <div className="inline-block overflow-hidden">
+                      <Badge
+                        variant="outline"
+                        className="border-black text-black text-xs py-0.5 inline-flex items-center"
+                      >
+                        <span className="mr-1">📁</span>
+                        {truncateText(
+                          folders.find((f) => f.id === Number(j.folder_id))
+                            ?.name || "Unknown"
+                        )}
+                      </Badge>
+                    </div>
                   )}
                   {j.archetype && (
-                    <Badge
-                      variant="outline"
-                      className="border-mythicalBlue-500 text-mythicalBlue-700"
-                    >
-                      🔮 {j.archetype}
-                    </Badge>
+                    <div className="inline-block overflow-hidden">
+                      <Badge
+                        variant="outline"
+                        className="border-mythicalBlue-500 text-mythicalBlue-700 text-xs py-0.5 inline-flex items-center text-nowrap"
+                      >
+                        <span className="mr-1">🔮</span>
+                        {truncateText(j.archetype)}
+                      </Badge>
+                    </div>
                   )}
                 </div>
               </div>
@@ -205,6 +270,32 @@ export default function JournalGrid({ journals, folders, onDelete }) {
             <Button variant="destructive" onClick={handleDeleteJournal}>
               Delete
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* New Folder Dialog */}
+      <Dialog open={showFolderDialog} onOpenChange={setShowFolderDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Folder</DialogTitle>
+            <DialogDescription>
+              Enter a name for your new folder.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            placeholder="Folder name"
+            value={newFolderName}
+            onChange={(e) => setNewFolderName(e.target.value)}
+          />
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowFolderDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAddFolder}>Create</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
