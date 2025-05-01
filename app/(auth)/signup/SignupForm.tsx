@@ -56,15 +56,12 @@ export default function SignupForm() {
     }
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ user: formData }),
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ user: formData }),
+      });
 
       if (!res.ok) {
         const err = await res.json();
@@ -104,20 +101,54 @@ export default function SignupForm() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField name="username" label="Username" />
-            <FormField name="email" type="email" label="Email" />
-            <FormField name="password" type="password" label="Password" />
+            <FormField
+              name="username"
+              label="Username"
+              value={formData.username}
+              onChange={handleChange}
+            />
+            <FormField
+              name="email"
+              type="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <FormField
+              name="password"
+              type="password"
+              label="Password"
+              value={formData.password}
+              onChange={handleChange}
+            />
             <FormField
               name="password_confirmation"
               type="password"
               label="Confirm Password"
+              value={formData.password_confirmation}
+              onChange={handleChange}
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField name="first_name" label="First Name" />
-            <FormField name="last_name" label="Last Name" />
-            <FormField name="nickname" label="Nickname" />
+            <FormField
+              name="first_name"
+              label="First Name"
+              value={formData.first_name}
+              onChange={handleChange}
+            />
+            <FormField
+              name="last_name"
+              label="Last Name"
+              value={formData.last_name}
+              onChange={handleChange}
+            />
+            <FormField
+              name="nickname"
+              label="Nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+            />
             <div>
               <Label htmlFor="archetype">Archetype</Label>
               <select
@@ -167,26 +198,26 @@ export default function SignupForm() {
       </Card>
     </div>
   );
+}
 
-  function FormField({
-    name,
-    label,
-    type = "text",
-  }: {
-    name: keyof typeof formData;
-    label: string;
-    type?: string;
-  }) {
-    return (
-      <div>
-        <Label htmlFor={name}>{label}</Label>
-        <Input
-          name={name}
-          type={type}
-          value={formData[name]}
-          onChange={handleChange}
-        />
-      </div>
-    );
-  }
+// ✅ Move FormField OUTSIDE the component
+function FormField({
+  name,
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+}) {
+  return (
+    <div>
+      <Label htmlFor={name}>{label}</Label>
+      <Input name={name} type={type} value={value} onChange={onChange} />
+    </div>
+  );
 }

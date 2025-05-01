@@ -24,7 +24,7 @@ export default function JournalsPage() {
       .then((data: Folder[]) => setFolders(data))
       .catch(console.error);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/journals`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/myJournals`, {
       credentials: "include",
     })
       .then((res) => res.json())
