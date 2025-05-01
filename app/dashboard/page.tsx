@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -52,16 +52,16 @@ export default function DashboardHome() {
   const archetype: Archetype | undefined = archetypes.find(
     (a) => a.name.toLowerCase() === user?.archetype?.toLowerCase()
   );
-  function debounce<T extends (...args: any[]) => void>(
-    func: T,
-    delay: number
-  ): T {
-    let timer: ReturnType<typeof setTimeout>;
-    return function (this: any, ...args: any[]) {
-      clearTimeout(timer);
-      timer = setTimeout(() => func.apply(this, args), delay);
-    } as T;
-  }
+function debounce<T extends (...args: unknown[]) => void>(
+  func: T,
+  delay: number
+): T {
+  let timer: ReturnType<typeof setTimeout>;
+  return function (this: unknown, ...args: Parameters<T>) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  } as T;
+}
   // Function to get a random quote
   useEffect(() => {
     setQuoteOfTheDay(getRandomQuote());
@@ -475,7 +475,7 @@ useEffect(() => {
                 Quote
               </h3>
               <blockquote className="text-leather italic border-l-4 border-leather-dark pl-4">
-                "{archetype.quote}"
+                &quot;{archetype.quote}&quot;
               </blockquote>
             </div>
           )}

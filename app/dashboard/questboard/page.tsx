@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import {
   FaPlus,
   FaCheck,
-  FaEye,
   FaHistory,
   FaLightbulb,
   FaBookOpen,
