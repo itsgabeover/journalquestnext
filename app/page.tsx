@@ -6,7 +6,7 @@ import { ArrowRight, ChevronRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-
+import { archetypes } from "@/data/archetypes";
 
 export default function HomePage() {
   const heroRef = useRef(null);
@@ -32,23 +32,10 @@ export default function HomePage() {
     },
   };
 
-  const archetypes = [
-    {
-      name: "The Warrior",
-      image: "/archetypes/Warrior.jpg",
-      description: "Courage, strength, and the will to overcome obstacles",
-    },
-    {
-      name: "The Sage",
-      image: "/archetypes/Sage.jpg",
-      description: "Wisdom, knowledge, and the pursuit of truth",
-    },
-    {
-      name: "The Creator",
-      image: "/archetypes/Creator.jpg",
-      description: "Innovation, imagination, and artistic expression",
-    },
-  ];
+  const featuredArchetypes = archetypes.filter((a) =>
+    ["Seeker", "Warrior", "Sage (Senex)"].includes(a.name)
+  );
+ 
 
   return (
     <div className="w-full max-w-7xl mx-auto">
@@ -128,7 +115,7 @@ export default function HomePage() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {archetypes.map((a) => (
+          {featuredArchetypes.map((a) => (
             <div
               key={a.name}
               className="p-6 rounded-lg bg-white border border-mythicalBlue-300 shadow-md hover:shadow-lg transition-all text-center"
@@ -138,7 +125,7 @@ export default function HomePage() {
                   src={a.image}
                   alt={a.name}
                   fill
-                  className="object-cover object-center transition-transform duration-500"
+                  className="object-cover object-top transition-transform duration-500"
                 />
               </div>
               <h3 className="text-xl font-bold font-quicksand text-leather-dark mb-2">{a.name}</h3>

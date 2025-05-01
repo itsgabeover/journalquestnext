@@ -63,25 +63,47 @@
   --parchment-light: 36, 33%, 97%;
   --leather: 26, 35%, 52%;
   --leather-dark: 26, 35%, 42%;
+  --leather-darker: 26, 35%, 32%;
   --leather-light: 26, 35%, 62%;
   --mythicalBlue-50: 215, 100%, 98%;
   --mythicalBlue-100: 215, 100%, 95%;
   --mythicalBlue-300: 215, 96%, 89%;
   --mythicalBlue-700: 215, 70%, 35%;
   --mythicalBlue-800: 215, 70%, 25%;
+  --parchment-medium: 36, 33%, 90%;
+--goldenGlow: 42, 77%, 60%;
+--mysticPurple: 270, 30%, 40%;
+--forestGreen: 135, 35%, 35%;
 }
 
 /* ✨ Utility Classes */
 .bg-parchment-light {
   background-color: hsl(var(--parchment-light));
 }
+.bg-parchment-medium {
+  background-color: hsl(var(--parchment-medium));
+}
 
+.text-goldenGlow {
+  color: hsl(var(--goldenGlow));
+}
+
+.text-mysticPurple {
+  color: hsl(var(--mysticPurple));
+}
+
+.text-forestGreen {
+  color: hsl(var(--forestGreen));
+}
 .bg-leather {
   background-color: hsl(var(--leather));
 }
 
 .bg-leather-dark {
   background-color: hsl(var(--leather-dark));
+}
+.bg-leather-darker {
+  background-color: hsl(var(--leather-darker));
 }
 
 .text-leather {
